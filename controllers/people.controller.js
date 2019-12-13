@@ -41,5 +41,29 @@ module.exports = {
       console.log(e);
       next(e.stack);
     }
+  },
+
+  deleteUser: async (req, res, next) => {
+    const { username, id } = req.body;
+
+    if (!username || !id) {
+      return next(
+        createError(404, `Client error, username or id not provided`)
+      );
+    }
+
+    try {
+      const query = `DELETE FROM users WHERE username=$1 AND id=$2`;
+      const { rowCount } = await db.query(query, [username, id]);
+      console.log({ rowCount });
+
+      if (!rowCount) {
+        return next(createError(500, "No user found"));
+      }
+
+      res.send({ status: 200, response: { rowCount } });
+    } catch (e) {
+      console.log(e);
+    }
   }
 };

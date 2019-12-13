@@ -1,20 +1,15 @@
-const db = require("../config/postgresql");
-const createError = require("http-errors");
+import db from "../config/postgresql";
+import createError from "http-errors";
+import { isEmpty } from "ramda";
 
 module.exports = {
   login: async (req, res, next) => {
     const { user } = req;
 
-    console.log({ user });
+    if (isEmpty(user)) {
+      return next(createError(404, "User not found"));
+    }
 
     res.send({ status: 200, response: user });
-    // const { name, email } = req.body;
-
-    // console.log({ name, email });
-    // if (!name || !email) {
-    //   return next(createError(500, "Not able to login"));
-    // }
-
-    // res.redirect("/");
   }
 };
