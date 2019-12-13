@@ -1,26 +1,34 @@
 const passport = require("passport");
 const LocalStrategy = require("passport-local").Strategy;
 const db = require("./postgresql");
+const bcrypt = require("bcryptjs");
 
 passport.use(
-  new LocalStrategy(async (username, password, cb) => {
-    console.log({ username, password });
+  new LocalStrategy(async (user, password, cb) => {
+    console.log({ user, password });
 
     try {
       const query =
-        "SELECT id, username, password, type FROM users WHERE username=$1";
+        "SELECT id, username, password FROM users WHERE username=$1";
 
-      const { rows } = await db.query(query, [username]);
+      const { rows } = await db.query(query, [user]);
 
       console.log({ rows });
 
       // Find
-      if (rows.length > 0) {
-        const first = rows[0];
+      if (rows.length === 1) {
+        const { 0: first } = rows;
 
-        //
+        // Encrypt passwords and compare if they match
 
-        cb(null, { id: first.id, username: first.username, type: first.type });
+        // console.log({ passwordsMatch });
+
+        // const match = await bcrypt.compare(password, first.password);
+
+        console.log({ password, hash: first.password });
+
+        cb(null, { id: first.id, user: first.username });
+        // }
 
         // cb(null, first);
       } else {
@@ -33,12 +41,14 @@ passport.use(
 );
 
 passport.serializeUser((user, done) => {
+  console.log("serialize user");
   done(null, user.id);
 });
 
 passport.deserializeUser((id, cb) => {
+  console.log("deserialize user");
   db.query(
-    "SELECT id, username, type FROM users WHERE id = $1",
+    "SELECT id, username FROM users WHERE id = $1",
     [parseInt(id, 10)],
     (err, results) => {
       if (err) {
