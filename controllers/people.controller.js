@@ -1,17 +1,11 @@
 const db = require("../config/postgresql");
 const createError = require("http-errors");
 const httpStatus = require("http-status");
+const bcrypt = require("bcryptjs");
+const salt = bcrypt.genSaltSync(10);
 
 module.exports = {
   statusCheck: async (req, res, next) => {
-    const { test } = req.body;
-
-    if (!test) {
-      return next(createError(404, "req body not being parsed"));
-    }
-
-    console.log({ test });
-
     res.send({ status: 200, response: "OK" });
   },
 
@@ -28,17 +22,19 @@ module.exports = {
   },
 
   addUser: async (req, res, next) => {
-    const { name, email } = req.body;
+    const { username, password } = req.body;
 
-    if (!name || !email) {
+    if (!username || !password) {
       return next(createError(httpStatus.INTERNAL_SERVER_ERROR, "not found"));
     }
 
-    const q = `INSERT INTO users (name, email)
+    const hashPassword = bcrypt.hashSync(password, salt);
+
+    const q = `INSERT INTO users (username, password)
     VALUES ($1, $2)`;
 
     try {
-      const response = await db.query(q, [name, email]);
+      const response = await db.query(q, [username, hashPassword]);
 
       res.send({ status: 200, response: response.rows[0] });
     } catch (e) {

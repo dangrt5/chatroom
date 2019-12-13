@@ -7,7 +7,7 @@ module.exports = {
 
     console.log({ user });
 
-    res.send({ status: 200, response: "OK" });
+    res.send({ status: 200, response: user });
     // const { name, email } = req.body;
 
     // console.log({ name, email });
