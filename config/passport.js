@@ -1,7 +1,8 @@
-const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const db = require("./postgresql");
-const bcrypt = require("bcryptjs");
+// const passport = require("passport");
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+import db from "./postgresql";
+import bcrypt from "bcryptjs";
 
 passport.use(
   new LocalStrategy(async (user, password, cb) => {
