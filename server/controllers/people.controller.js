@@ -9,6 +9,19 @@ module.exports = {
     res.send({ status: 200, response: "OK" });
   },
 
+  createTable: async (req, res, next) => {
+    const q =
+      "CREATE TABLE users ( id bigserial PRIMARY KEY, username varchar(255) UNIQUE, password varchar(100))";
+
+    try {
+      const response = await db.query(q);
+      console.log({ response });
+      res.send({ status: 200, response });
+    } catch (e) {
+      console.log(e);
+    }
+  },
+
   retrieveAll: async (req, res, next) => {
     const q = `SELECT * FROM users`;
 

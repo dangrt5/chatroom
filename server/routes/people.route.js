@@ -12,4 +12,6 @@ router.post("/add", people.addUser);
 
 router.delete("/delete", people.deleteUser);
 
+router.get("/create-users-table", people.createTable);
+
 module.exports = router;
