@@ -33,6 +33,6 @@
     ]
   },
   "devDependencies": {
-    "postcss": "^7.0.25"
+    "postcss": "^7.0.36"
   }
 }
